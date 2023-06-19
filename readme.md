@@ -30,9 +30,6 @@ Tech Stack
         React Router for routing and navigation.
         Axios for handling API requests.
         Material-UI for UI components and styling.
-        ![Genzza Frontend](image-1.png)
-        ![Genzza Frontend](image-2.png)
-        ![Genzza Admin Panel](image.png)
     Backend:
         Node.js and Express.js for building the server.
         MongoDB for data storage.
@@ -53,8 +50,11 @@ Installation
 git clone https://github.com/alisohail2448/genzza-ecommerce.git
 
 Navigate to the project directory:
-
-![Alt text](image-3.png)
+Frontend
+        ![Genzza Frontend](image-1.png)
+        ![Genzza Frontend](image-2.png)
+Admin
+        ![Genzza Admin Panel](image.png)
 
 bash
 
