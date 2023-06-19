@@ -54,6 +54,8 @@ git clone https://github.com/alisohail2448/genzza-ecommerce.git
 
 Navigate to the project directory:
 
+![Alt text](image-3.png)
+
 bash
 
 cd genzza-ecommerce
