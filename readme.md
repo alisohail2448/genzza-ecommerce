@@ -1,6 +1,16 @@
 Genzza E-Commerce
 
 Genzza E-Commerce is a full-stack e-commerce web application built with React, Node.js, Express.js, and MongoDB. It provides a user-friendly interface for customers to browse and purchase products, as well as an admin dashboard for managing products, orders, and user accounts.
+
+
+Frontend
+        ![Genzza Frontend](image-1.png)
+        ![Genzza Frontend](image-2.png)
+Admin
+        ![Genzza Admin Panel](image.png)
+
+
+
 Features
 
     User authentication and authorization:
@@ -50,11 +60,6 @@ Installation
 git clone https://github.com/alisohail2448/genzza-ecommerce.git
 
 Navigate to the project directory:
-Frontend
-        ![Genzza Frontend](image-1.png)
-        ![Genzza Frontend](image-2.png)
-Admin
-        ![Genzza Admin Panel](image.png)
 
 bash
 
