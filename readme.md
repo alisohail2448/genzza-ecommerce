@@ -4,10 +4,9 @@ Genzza E-Commerce is a full-stack e-commerce web application built with React, N
 
 
 Frontend
-        ![Genzza Frontend](image-1.png)
-        ![Genzza Frontend](image-2.png)
+        ![Genzza Frontend](image-3.png)
 Admin
-        ![Genzza Admin Panel](image.png)
+        ![Genzza Admin Dashboard](image.png)
 
 
 
