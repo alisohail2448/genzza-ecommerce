@@ -2,6 +2,12 @@ Genzza E-Commerce
 
 Genzza E-Commerce is a full-stack e-commerce web application built with React, Node.js, Express.js, and MongoDB. It provides a user-friendly interface for customers to browse and purchase products, as well as an admin dashboard for managing products, orders, and user accounts.
 
+I have developed a modern e-commerce website with full authentication functionality, including features such as login, signup, ordering, cart management, wishlist, compare, and blog sections. The website also integrates with Razorpay for secure order payments. The project incorporates product filtering options and provides users with the ability to switch between different grid view layouts.
+
+For the frontend, I utilized React, Bootstrap, and Axios for API calls. The backend is built with Node.js, Express.js, and MongoDB for efficient data storage and retrieval. To handle image uploads, I integrated Cloudinary, ensuring seamless functionality for users to add and manage product images.
+
+Additionally, I created an admin dashboard that allows for comprehensive control and management of various actions on the website. The admin dashboard is built using React, Bootstrap, and Ant Design, providing dynamic data management capabilities.
+
 
 Frontend
         ![Genzza Frontend](image-3.png)
