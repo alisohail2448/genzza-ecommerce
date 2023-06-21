@@ -13,6 +13,7 @@ const OurStore = () => {
   const [brands, setBrands] = useState([]);
   const [categories, setCategories] = useState([]);
   const [tags, setTags] = useState([]);
+  const [loading, setLoading] = useState(true); // Loading state
 
   //Filter States
   const [category, setCategory] = useState(null);
@@ -29,7 +30,15 @@ const OurStore = () => {
   }, [sort, tag, brand, category, minPrice, maxPrice]);
 
   const getProducts = () => {
-    dispatch(getAllProducts({ sort, tag, brand, category, minPrice, maxPrice }));
+    setLoading(true); // Set loading to true before fetching data
+
+    // Simulate API call delay with setTimeout
+    setTimeout(() => {
+      dispatch(
+        getAllProducts({ sort, tag, brand, category, minPrice, maxPrice })
+      );
+      setLoading(false); // Set loading to false after data is fetched
+    }, 1000);
   };
 
   useEffect(() => {
@@ -316,14 +325,27 @@ const OurStore = () => {
                 </div>
               </div>
 
-              <div className="products-list pb-">
-                <div className="d-flex gap-10 flex-wrap">
-                  <ProductCard
-                    data={productState ? productState : []}
-                    grid={grid}
-                  />
+              {loading ? (
+              <div className="load">
+                <div class="loader">
+                  <div class="square" id="sq1"></div>
+                  <div class="square" id="sq2"></div>
+                  <div class="square" id="sq3"></div>
+                  <div class="square" id="sq4"></div>
+                  <div class="square" id="sq5"></div>
+                  <div class="square" id="sq6"></div>
+                  <div class="square" id="sq7"></div>
+                  <div class="square" id="sq8"></div>
+                  <div class="square" id="sq9"></div>
                 </div>
               </div>
+              ) : (
+                <div className="products-list pb-">
+                  <div className="d-flex gap-10 flex-wrap">
+                    <ProductCard data={productState ? productState : []} grid={grid} />
+                  </div>
+                </div>
+              )} 
             </div>
           </div>
         </div>

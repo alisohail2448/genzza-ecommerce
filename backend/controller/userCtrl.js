@@ -59,6 +59,7 @@ const loginUser = asyncHandler(async (req, res) => {
       token: generateToken(findUser?._id),
     });
   } else {
+    res.status(401);
     throw new Error("Invalid Credentials");
   }
 });
@@ -558,6 +559,78 @@ const updateOrder = asyncHandler(async (req, res) => {
   }
 });
 
+const addToComparePage = asyncHandler(async (req, res) => {
+  const { _id } = req.user;
+  const { productId } = req.body;
+
+  try {
+    // Retrieve the user and the product
+    const user = await User.findById(_id);
+    const product = await Product.findById(productId);
+
+    // Check if the product is already in the compare page
+    const isAlreadyAdded = user.compare.some((p) => p.equals(product._id));
+    if (isAlreadyAdded) {
+      return res.status(400).json({ message: 'Product already added to compare page' });
+    }
+
+    // Add the product to the user's compare page
+    user.compare.push(product);
+    await user.save();
+
+    res.json(user.compare);
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
+
+
+
+
+const getComparePageProducts = asyncHandler(async (req, res) => {
+  const { _id } = req.user;
+  validateMongoDbId(_id);
+  try {
+    // const userCompare = await User.findById(_id).populate('compare').populate('compare.color');
+    const userCompare = await User.findById(_id).populate({
+      path: 'compare',
+      populate: { path: 'color' }
+    });
+    res.json(userCompare);
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
+
+
+const removeProductFromCompare = asyncHandler(async (req, res) => {
+  const { _id } = req.user;
+  validateMongoDbId(_id);
+  const { productId } = req.body;
+
+  try {
+    // Retrieve the user
+    const user = await User.findById(_id);
+
+    // Check if the product exists in the compare page
+    const productIndex = user.compare.findIndex((product) => product.toString() === productId);
+    if (productIndex === -1) {
+      return res.status(404).json({ message: 'Product not found in compare page' });
+    }
+
+    // Remove the product from the compare page
+    user.compare.splice(productIndex, 1);
+    await user.save();
+
+    res.json(user.compare);
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
+
 
 
 // const emptyCart = asyncHandler(async (req, res) => {
@@ -734,7 +807,10 @@ module.exports = {
   getMyOrders,
   getSingleOrder,
   updateOrder,
+  addToComparePage,
+  getComparePageProducts,
   removeProductFromCart,
+  removeProductFromCompare,
   updateProductQuantityFromCart,
   getMonthWiseOrderIncome,
   getYearlyTotalOrders,

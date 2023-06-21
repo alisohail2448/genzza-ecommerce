@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import ReactStars from "react-rating-stars-component";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import prodcompare from "../images/prodcompare.svg";
@@ -16,6 +16,8 @@ import {
   HeartIcon,
   ShoppingCartIcon,
 } from "@heroicons/react/24/outline";
+import { addProductToCompare, getUserProductWishlist } from "../features/user/userSlice";
+import { toast } from "react-hot-toast";
 
 const ProductCard = (props) => {
   const { grid, data } = props;
@@ -25,7 +27,12 @@ const ProductCard = (props) => {
 
   const addWishlist = (id) => {
     dispatch(addToWishlist(id));
+    toast.success("Product Added to Wishlist!!")
   };
+
+  const addToCompare = (id) => {
+    dispatch(addProductToCompare(id));
+  }
   return (
     <>
       {data &&
@@ -51,11 +58,11 @@ const ProductCard = (props) => {
                 </div>
                 <div className="product-image">
                   <img
-                    src={item?.images[0].url}
+                    src={item?.images[0]?.url}
                     className="img-fluid"
                     alt="product image"
                   />
-                  <img src={watch2} className="img-fluid" alt="product image" />
+                  <img src={item?.images[1]?.url ? item?.images[1]?.url : item?.images[0]?.url} className="img-fluid" alt="product image" />
                 </div>
                 <div className="product-details">
                   <h6 className="brand">{item?.brand}</h6>
@@ -77,7 +84,7 @@ const ProductCard = (props) => {
                 </div>
                 <div className="action-bar position-absolute">
                   <div className="d-flex flex-column gap-15">
-                    <button className="border-0 bg-transparent">
+                    <button className="border-0 bg-transparent"  onClick={(e) => addToCompare(item?._id)}>
                       <ArrowPathIcon className="product-icon" />
                     </button>
                     <button className="border-0 bg-transparent">
@@ -99,3 +106,8 @@ const ProductCard = (props) => {
 };
 
 export default ProductCard;
+
+
+
+
+

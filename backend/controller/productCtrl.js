@@ -4,8 +4,6 @@ const slugify = require("slugify");
 const User = require("../models/userModels.js");
 const validateMongoDbId = require("../utils/validateMongoDbId.js");
 
-
-
 const createProduct = asyncHandler(async (req, res) => {
   try {
     if (req.body.title) {
@@ -22,7 +20,7 @@ const getProduct = asyncHandler(async (req, res) => {
   const { id } = req.params;
   validateMongoDbId(id);
   try {
-    const findProduct = await Product.findById(id).populate("color");
+    const findProduct = await Product.findById(id).populate("color").populate("ratings.postedby");
     res.json(findProduct);
   } catch (error) {
     throw new Error(error);
@@ -192,8 +190,6 @@ const rating = asyncHandler(async (req, res) => {
     throw new Error(error);
   }
 });
-
-
 
 module.exports = {
   createProduct,

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { BiArrowBack } from "react-icons/bi";
 import watch from "../images/watch.jpg";
 import logo from "../images/logot3.png";
@@ -23,6 +23,7 @@ const shippingSchema = yup.object({
 
 const Checkout = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [shippingInfo, setShippingInfo] = useState(null);
   const [totalAmount, setTotalAmount] = useState(null);
   const [paymentInfo, setPaymentInfo] = useState({
@@ -30,9 +31,6 @@ const Checkout = () => {
     razorpayPaymentId: "",
   });
   const [cartProductState, setCartProductState] = useState([]);
-
-
-
 
   const userCartState = useSelector((state) => state?.auth?.cartProducts);
 
@@ -57,7 +55,7 @@ const Checkout = () => {
       checkOutHandler();
     },
   });
-  console.log(shippingInfo, paymentInfo);
+  // console.log(shippingInfo, paymentInfo);
 
   useEffect(() => {
     let sum = 0;
@@ -68,7 +66,6 @@ const Checkout = () => {
       setTotalAmount(sum);
     }
   }, [userCartState]);
-
 
   const loadScript = (src) => {
     return new Promise((resolve) => {
@@ -83,21 +80,21 @@ const Checkout = () => {
       document.body.appendChild(script);
     });
   };
-
   useEffect(() => {
     let items = [];
     for (let index = 0; index < userCartState?.length; index++) {
       items.push({
-        product: userCartState[index].productId._id,
-        quantity: userCartState[index].quantity,
-        color: userCartState[index].color._id,
-        price: userCartState[index].price,
+        product: userCartState[index]?.productId?._id,
+        quantity: userCartState[index]?.quantity,
+        color: userCartState[index]?.color?._id,
+        price: userCartState[index]?.price,
       });
-      setCartProductState(items);
     }
+    setCartProductState(items);
   }, []);
 
-  const checkOutHandler = async () => {
+  const checkOutHandler = async (orderItems, shippingInfo) => {
+    // console.log(orderItems)
     const res = await loadScript(
       "https://checkout.razorpay.com/v1/checkout.js"
     );
@@ -105,9 +102,10 @@ const Checkout = () => {
       alert("Razorpay SDK Failed to load");
       return;
     }
+
     const result = await axios.post(
       "http://localhost:5000/api/user/order/checkout",
-      {amount: totalAmount},
+      { amount: totalAmount },
       config
     );
     if (!result) {
@@ -125,28 +123,23 @@ const Checkout = () => {
       description: "Test Transaction",
       image: { logo },
       order_id: order_id,
+
       handler: async function (response) {
-        const data = {
-          orderCreationId: order_id,
-          razorpayPaymentId: response.razorpay_payment_id,
+        const paymentInfo = {
           razorpayOrderId: response.razorpay_order_id,
+          razorpayPaymentId: response.razorpay_payment_id,
         };
 
-        const result = await axios.post(
-          "http://localhost:5000/api/user/order/payment-verification",
-          data,
-          config
-        );
-        setPaymentInfo({
-          razorpayOrderId: response.razorpay_order_id,
-          razorpayPaymentId: response.razorpay_payment_id,
-        });
+        setPaymentInfo(paymentInfo);
+        setShippingInfo(shippingInfo);
+
+        await processUserOrder();
 
         dispatch(
           createUserOrder({
             totalPrice: totalAmount,
             totalPriceAfterDiscount: totalAmount,
-            orderItems: cartProductState,
+            orderItems,
             paymentInfo,
             shippingInfo,
           })
@@ -167,6 +160,41 @@ const Checkout = () => {
 
     const paymentObject = new window.Razorpay(options);
     paymentObject.open();
+  };
+
+  const processUserOrder = async () => {
+    const data = {
+      razorpayPaymentId: paymentInfo.razorpayPaymentId,
+      razorpayOrderId: paymentInfo.razorpayOrderId,
+    };
+
+    const result = await axios.post(
+      "http://localhost:5000/api/user/order/payment-verification",
+      data,
+      config
+    );
+
+    if (result) {
+      navigate("/my-orders");
+    }
+  };
+
+  const onSubmit = (e) => {
+    e.preventDefault();
+    const shippingInfo = {
+      firstname: e.target.firstname.value,
+      lastname: e.target.lastname.value,
+      address: e.target.address.value,
+      city: e.target.city.value,
+      state: e.target.state.value,
+      country: e.target.country.value,
+      pincode: e.target.pincode.value,
+      other: e.target.other.value,
+    };
+
+    setShippingInfo(shippingInfo);
+    // console.log(cartProductState)
+    checkOutHandler(cartProductState, shippingInfo);
   };
 
   return (
@@ -218,7 +246,7 @@ const Checkout = () => {
                   </p>
                   <h4 className="mb-3 title-checkout">Shipping Address</h4>
                   <form
-                    onSubmit={formik.handleSubmit}
+                    onSubmit={onSubmit}
                     action=""
                     className="d-flex gap-15 flex-wrap justify-content-between"
                   >

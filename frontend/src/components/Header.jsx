@@ -15,10 +15,12 @@ import {
   UserIcon,
 } from "@heroicons/react/24/outline";
 import { useDispatch, useSelector } from "react-redux";
-import { getUserCart } from "../features/user/userSlice";
+import { getUserCart, logout } from "../features/user/userSlice";
 import { Typeahead } from "react-bootstrap-typeahead"; // ES2015
 import "react-bootstrap-typeahead/css/Typeahead.css";
 import { getAProduct } from "../features/product/productSlice";
+import { toast } from "react-hot-toast";
+import CarouselText from "./CarouselText";
 
 const Header = () => {
   const dispatch = useDispatch();
@@ -56,27 +58,15 @@ const Header = () => {
   }, [userCartState]);
 
   const handleLogout = () => {
-    localStorage.clear();
-    window.location.reload();
+    dispatch(logout());
+    toast.success("Logout Successfully!");
   };
   return (
     <>
-      <header className="header-top-strip py-3">
+      <header className="header-top-strip" style={{ padding: "10px 0px" }}>
         <div className="container-xxl">
           <div className="row">
-            <div className="col-6">
-              <p className="heading-color mb-0">
-                Free Shipping Over $100 & Free Returns
-              </p>
-            </div>
-            <div className="col-6">
-              <p className="text-end heading-color mb-0">
-                Hotline:
-                <a className="heading-color" href="tel:+91 7249047105">
-                  +91 7249047105
-                </a>
-              </p>
-            </div>
+            <CarouselText />
           </div>
         </div>
       </header>
@@ -227,8 +217,12 @@ const Header = () => {
                   <div className="d-flex align-items-center gap-15">
                     <NavLink to="/">Home</NavLink>
                     <NavLink to="/store">Our Store</NavLink>
-                    <NavLink to="/my-orders">My Orders</NavLink>
                     <NavLink to="/blogs">Blogs</NavLink>
+                    {authState?.user === null ? (
+                      ""
+                    ) : (
+                      <NavLink to="/my-orders">My Orders</NavLink>
+                    )}
                     <NavLink to="/contact">Contact</NavLink>
                     {authState?.user === null ? (
                       ""

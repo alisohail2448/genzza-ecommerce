@@ -109,9 +109,9 @@ const SingleProduct = () => {
       );
       setTimeout(() => {
         dispatch(getAProduct(getProductId));
+        setComment(null);
+        setStar(null);
       }, 100);
-      setComment(null);
-      setStar(null);
     }
     return false;
   };
@@ -386,7 +386,7 @@ const SingleProduct = () => {
                       return (
                         <div className="review" key={index}>
                           <div className="d-flex gap-10 align-items-center">
-                            <h6 className="mb-0">Navdeep</h6>
+                            <h6 className="mb-0">{item?.postedby?.firstname + " " + item?.postedby?.lastname}</h6>
                             <ReactStars
                               count={5}
                               size={24}

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Meta from "../components/Meta";
 import BreadCrumb from "../components/BreadCrumb";
 import { useDispatch, useSelector } from "react-redux";
@@ -6,13 +6,16 @@ import { getUserOrders } from "../features/user/userSlice";
 
 const Order = () => {
   const dispatch = useDispatch();
-  const orderState = useSelector(
-    (state) => state?.auth?.getOrderedProduct?.orders
-  );
+  const orderState = useSelector((state) => state?.auth?.getOrderedProduct?.orders);
+  const [isLoading, setIsLoading] = useState(true); // Loading state
 
   useEffect(() => {
-    dispatch(getUserOrders());
-  }, []);
+    dispatch(getUserOrders())
+      .then(() => setIsLoading(false))
+      .catch((error) => {
+        setIsLoading(false);
+      });
+  }, []); 
 
   return (
     <>
@@ -46,7 +49,22 @@ const Order = () => {
               </div>
             </div>
             <div className="col-12 mt-3">
-              {orderState &&
+              {isLoading ? ( // Render loading state
+                <div className="load">
+                  <div class="loader">
+                    <div class="square" id="sq1"></div>
+                    <div class="square" id="sq2"></div>
+                    <div class="square" id="sq3"></div>
+                    <div class="square" id="sq4"></div>
+                    <div class="square" id="sq5"></div>
+                    <div class="square" id="sq6"></div>
+                    <div class="square" id="sq7"></div>
+                    <div class="square" id="sq8"></div>
+                    <div class="square" id="sq9"></div>
+                  </div>
+                </div>
+              ) : (
+                orderState &&
                 orderState?.map((item, index) => {
                   return (
                     <div key={index} className="row pt-3 my-3">
@@ -130,9 +148,10 @@ const Order = () => {
                           })}
                         </div>
                       </div>
-                    </div>
+                  </div>
                   );
-                })}
+                })
+              )}
             </div>
           </div>
         </div>

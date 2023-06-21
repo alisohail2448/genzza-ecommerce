@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import ReactStars from "react-rating-stars-component";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import prodcompare from "../images/prodcompare.svg";
 import wish from "../images/wish.svg";
 import wishlist from "../images/wishlist.svg";
@@ -10,16 +10,29 @@ import addcart from "../images/add-cart.svg";
 import view from "../images/view.svg";
 import { useDispatch, useSelector } from "react-redux";
 import { addToWishlist } from "../features/product/productSlice";
-import { ArrowPathIcon, EyeIcon, HeartIcon, ShoppingCartIcon } from "@heroicons/react/24/outline";
+import {
+  ArrowPathIcon,
+  EyeIcon,
+  HeartIcon,
+  ShoppingCartIcon,
+} from "@heroicons/react/24/outline";
+import { addProductToCompare } from "../features/user/userSlice";
+import { toast } from "react-hot-toast";
 
 const PopularCard = (props) => {
   const { data } = props;
   let location = useLocation();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const addWishlist = (id) => {
     dispatch(addToWishlist(id));
   };
+
+  const addToCompare = (id) => {
+    dispatch(addProductToCompare(id));
+  };
+
   return (
     <>
       {data &&
@@ -36,17 +49,17 @@ const PopularCard = (props) => {
                       className="border-0 bg-transparent"
                       onClick={(e) => addWishlist(item?._id)}
                     >
-                    <HeartIcon className="product-icon" />
+                      <HeartIcon className="product-icon" />
                     </button>
                   </div>
                   <div className="product-image">
                     <img
-                      src={item?.images[0].url}
+                      src={item?.images[0]?.url}
                       className="img-fluid"
                       alt="product image"
                     />
                     <img
-                      src={watch2}
+                      src={item?.images[1]?.url ? item?.images[1]?.url : item?.images[0]?.url}
                       className="img-fluid"
                       alt="product image"
                     />
@@ -69,16 +82,21 @@ const PopularCard = (props) => {
                   </div>
                   <div className="action-bar position-absolute">
                     <div className="d-flex flex-column gap-15">
-                      <button className="border-0 bg-transparent">
-                      <ArrowPathIcon className="product-icon" />
+                      <button
+                        className="border-0 bg-transparent"
+                        onClick={(e) => addToCompare(item?._id)}
+                      >
+                        <ArrowPathIcon className="product-icon" />
                       </button>
                       <button className="border-0 bg-transparent">
-                      <Link to={`/product/${item?._id}`}>
-                        <EyeIcon className="product-icon" />
-                      </Link>
+                        <Link to={`/product/${item?._id}`}>
+                          <EyeIcon className="product-icon" />
+                        </Link>
                       </button>
                       <button className="border-0 bg-transparent">
-                      <ShoppingCartIcon className="product-icon" />
+                        <Link to={`/product/${item?._id}`}>
+                          <ShoppingCartIcon className="product-icon" />
+                        </Link>
                       </button>
                     </div>
                   </div>

@@ -134,6 +134,39 @@ export const resetUserPassword = createAsyncThunk(
   }
 );
 
+export const addProductToCompare = createAsyncThunk(
+  "user/compare/add",
+  async (productId,thunkAPI) => {
+    try {
+      return await authService.addCompareProduct(productId);
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+
+export const getCompareProducts = createAsyncThunk(
+  "user/compare/get",
+  async (thunkAPI) => {
+    try {
+      return await authService.getCompareProduct();
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+
+export const deleteCompareProduct = createAsyncThunk(
+  "user/compare/remove",
+  async (productId, thunkAPI) => {
+    try {
+      return await authService.removeCompareProduct(productId);
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+
 
 const getCustomerFromLocalStorage = localStorage.getItem('customer') ? JSON.parse(localStorage.getItem("customer")) : null;
 
@@ -149,7 +182,21 @@ const initialState = {
 export const authSlice = createSlice({
   name: "auth",
   initialState: initialState,
-  reducers: [],
+  reducers: {
+    // ... Other reducers ...
+    logout: (state) => {
+      localStorage.clear();
+      state.user = null;
+      state.getOrderedProduct = null;
+      state.cartProducts = null;
+      state.wishlist = null;
+      state.orders = [];
+      state.isError = false;
+      state.isLoading = false;
+      state.isSuccess = false;
+      state.message = "";
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(registerUser.pending, (state) => {
@@ -189,6 +236,9 @@ export const authSlice = createSlice({
         state.isSuccess = false;
         state.message = action.error;
         toast.error(action.error)
+        if(state.isSuccess === false){
+          toast.success("Please Check your Password!")
+        }
       })
       .addCase(getUserProductWishlist.pending, (state) => {
         state.isLoading = true;
@@ -380,7 +430,66 @@ export const authSlice = createSlice({
           toast.error("Something went wrong!")
         }
       })
+      .addCase(addProductToCompare.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(addProductToCompare.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isError = false;
+        state.isSuccess = true;
+        state.addCompare = action.payload;
+        if(state.isSuccess === true){
+          toast.success("Product Added for Compare!")
+        }
+      })
+      .addCase(addProductToCompare.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.isSuccess = false;
+        state.message = action.error;
+        if(state.isSuccess === false){
+          toast.error("Something went wrong!")
+        }
+      })
+      .addCase(getCompareProducts.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getCompareProducts.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isError = false;
+        state.isSuccess = true;
+        state.getCompare = action.payload;
+      })
+      .addCase(getCompareProducts.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.isSuccess = false;
+        state.message = action.error;
+      })      
+      .addCase(deleteCompareProduct.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(deleteCompareProduct.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isError = false;
+        state.isSuccess = true;
+        state.deleteCompare = action.payload;
+        if(state.isSuccess === true){
+          toast.success("Product Remove from Compare!")
+        }
+      })
+      .addCase(deleteCompareProduct.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.isSuccess = false;
+        state.message = action.error;
+        if(state.isSuccess === false){
+          toast.error("Something went wrong!")
+        }
+      })
   },
 });
 
+
+export const { logout } = authSlice.actions;
 export default authSlice.reducer;

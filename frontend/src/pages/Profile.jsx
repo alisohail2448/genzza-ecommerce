@@ -5,16 +5,12 @@ import { useFormik } from "formik";
 import * as yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
 import { updateUserProfile } from "../features/user/userSlice";
-import { FiEdit } from "react-icons/fi"
+import { FiEdit } from "react-icons/fi";
 
 const profileSchema = yup.object({
   firstname: yup.string().required("First Name is Required"),
   lastname: yup.string().required("Last Name is Required"),
-  email: yup
-    .string()
-    .nullable()
-    .email("Email should be Valid")
-    .required("Email is Required"),
+  email: yup.string().nullable().email("Email should be Valid").required("Email is Required"),
   mobile: yup.string().required("Mobile No is Required"),
 });
 
@@ -22,6 +18,7 @@ const Profile = () => {
   const dispatch = useDispatch();
   const [edit, setEdit] = useState(true);
   const userState = useSelector((state) => state?.auth?.user);
+  const [loading, setLoading] = useState(false);
 
   const formik = useFormik({
     initialValues: {
@@ -32,11 +29,14 @@ const Profile = () => {
       mobile: userState?.mobile,
     },
     validationSchema: profileSchema,
-    onSubmit: (values) => {
-      dispatch(updateUserProfile(values));
+    onSubmit: async (values) => {
+      setLoading(true);
+      await dispatch(updateUserProfile(values));
+      setLoading(false);
       setEdit(true);
     },
   });
+
   return (
     <>
       <Meta title={"My Account"} />

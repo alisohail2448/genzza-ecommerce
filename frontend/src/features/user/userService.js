@@ -78,6 +78,21 @@ const logOutUser = async () => {
   if (response.data) return response.data;
 };
 
+const addCompareProduct = async (productId) => {
+  const response = await axios.post(`${base_url}user/compare`, {productId}, config);
+  if (response.data) return response.data;
+};
+
+const getCompareProduct = async () => {
+  const response = await axios.get(`${base_url}user/compare`, config);
+  if (response.data) return response.data;
+};
+
+const removeCompareProduct = async (productId) => {
+  const response = await axios.delete(`${base_url}user/compare`, { data: { productId }, ...config });
+  if (response.data) return response.data;
+};
+
 
 
 export const authService = {
@@ -94,4 +109,7 @@ export const authService = {
   forgotPassToken,
   logOutUser,
   resetPassword,
+  addCompareProduct,
+  getCompareProduct,
+  removeCompareProduct,
 };

@@ -1,3 +1,4 @@
+import { XMarkIcon } from '@heroicons/react/24/outline';
 import React from 'react'
 
 const WishlistCard = (props) => {
@@ -9,12 +10,7 @@ const WishlistCard = (props) => {
               return (
                 <div className="col-3" key={index}>
                   <div className="wishlist-card position-relative">
-                    <img
-                    onClick={(e) => removeFromWishlist(item?._id)}
-                      src="images/cross.svg"
-                      alt="cross"
-                      className="position-absolute cross img-fluid"
-                    />
+                  <XMarkIcon className="product-icon position-absolute cross" onClick={(e) => removeFromWishlist(item?._id)} />
                     <div className="wishlist-card-image bg-white">
                       <img
                         src={

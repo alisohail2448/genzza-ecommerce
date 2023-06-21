@@ -90,6 +90,9 @@ export const productSlice = createSlice({
       state.isLoading = false;
       state.isSuccess = false;
       state.message = action.error;
+      if(state.isSuccess === false){
+        toast.success("Something went wrong!")
+      }
     })
     .addCase(getAProduct.pending, (state) => {
       state.isLoading = true;

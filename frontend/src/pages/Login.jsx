@@ -6,6 +6,7 @@ import { useFormik } from "formik";
 import * as yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
 import { loginUser } from "../features/user/userSlice";
+import { toast } from "react-hot-toast";
 
 const logInSchema = yup.object({
   email: yup
@@ -28,11 +29,19 @@ const Login = () => {
       password: "",
     },
     validationSchema: logInSchema,
-    onSubmit: (values) => {
-      dispatch(loginUser(values));
-      setTimeout(() => {
-        navigate("/");
-      }, 300);
+    onSubmit: async (values) => {
+      try {
+        await dispatch(loginUser(values));
+        setTimeout(() => {
+          navigate("/");
+        }, 300);
+      } catch (error) {
+        if (error.response && error.response.status === 401) {
+          formik.setFieldError("password", error.response.data.message);
+        } else {
+          console.error("An error occurred:", error);
+        }
+      }
     },
   });
 

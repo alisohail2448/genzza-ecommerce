@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Meta from "../components/Meta";
 import BreadCrumb from "../components/BreadCrumb";
 import BlogCard from "../components/BlogCard";
@@ -7,15 +7,19 @@ import { getAllBlogs } from "../features/blog/blogSlice";
 
 const Blogs = () => {
   const dispatch = useDispatch();
-
   const blogState = useSelector((state) => state?.blog?.blog);
+  const [isLoading, setIsLoading] = useState(true); // Loading state
 
   useEffect(() => {
     getBlogs();
   }, []);
 
   const getBlogs = () => {
-    dispatch(getAllBlogs());
+    dispatch(getAllBlogs())
+      .then(() => setIsLoading(false))
+      .catch((error) => {
+        setIsLoading(false);
+      });
   };
   return (
     <>
@@ -39,9 +43,25 @@ const Blogs = () => {
             </div>
 
             <div className="col-9">
-              <div className="row">
-                <BlogCard data={blogState ? blogState : []} />
-              </div>
+              {isLoading ? ( // Render loading state
+                 <div className="load">
+                 <div class="loader">
+                   <div class="square" id="sq1"></div>
+                   <div class="square" id="sq2"></div>
+                   <div class="square" id="sq3"></div>
+                   <div class="square" id="sq4"></div>
+                   <div class="square" id="sq5"></div>
+                   <div class="square" id="sq6"></div>
+                   <div class="square" id="sq7"></div>
+                   <div class="square" id="sq8"></div>
+                   <div class="square" id="sq9"></div>
+                 </div>
+               </div>
+              ) : (
+                <div className="row">
+                  <BlogCard data={blogState ? blogState : []} />
+                </div>
+              )}
             </div>
           </div>
         </div>
