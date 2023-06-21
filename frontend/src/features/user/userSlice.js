@@ -167,6 +167,17 @@ export const deleteCompareProduct = createAsyncThunk(
   }
 );
 
+export const emptyUserCart = createAsyncThunk(
+  "user/cart/delete",
+  async (thunkAPI) => {
+    try {
+      return await authService.emptyCart();
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+
 
 const getCustomerFromLocalStorage = localStorage.getItem('customer') ? JSON.parse(localStorage.getItem("customer")) : null;
 
@@ -215,7 +226,9 @@ export const authSlice = createSlice({
         state.isError = true;
         state.isSuccess = false;
         state.message = action.error;
-        toast.error(action.error)
+        if(state.isError === true){
+          toast.error(action.payload.response.data.message)
+        }
       })
       .addCase(loginUser.pending, (state) => {
         state.isLoading = true;
@@ -235,9 +248,8 @@ export const authSlice = createSlice({
         state.isError = true;
         state.isSuccess = false;
         state.message = action.error;
-        toast.error(action.error)
-        if(state.isSuccess === false){
-          toast.success("Please Check your Password!")
+        if(state.isError === true){
+          toast.error(action.payload.response.data.message)
         }
       })
       .addCase(getUserProductWishlist.pending, (state) => {
@@ -340,7 +352,7 @@ export const authSlice = createSlice({
         state.isSuccess = true;
         state.orderedProduct = action.payload;
         if(state.isSuccess === true){
-          toast.success("Ordered Successfully!")
+          toast.success("Ordered Created Successfully!")
         }
       })
       .addCase(createUserOrder.rejected, (state, action) => {
@@ -375,9 +387,20 @@ export const authSlice = createSlice({
         state.isError = false;
         state.isSuccess = true;
         state.updatedUser = action.payload;
-        if(state.isSuccess === true){
-          toast.success("Profile Updated Successfully!")
+
+        let currentUserData = JSON.parse(localStorage.getItem("customer"));
+
+        let newUserData = {
+          _id: currentUserData?._id,
+          token: currentUserData?.token,
+          firstname: action?.payload?.firstname,
+          lastname: action?.payload?.lastname,
+          email: action?.payload?.email,
+          mobile: action?.payload?.mobile,
         }
+          localStorage.setItem("customer", JSON.stringify(newUserData));
+          state.user = newUserData;
+          toast.success("Profile Updated Successfully!")
       })
       .addCase(updateUserProfile.rejected, (state, action) => {
         state.isLoading = false;
@@ -486,6 +509,21 @@ export const authSlice = createSlice({
         if(state.isSuccess === false){
           toast.error("Something went wrong!")
         }
+      })
+      .addCase(emptyUserCart.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(emptyUserCart.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isError = false;
+        state.isSuccess = true;
+        state.deletedCart = action.payload;
+      })
+      .addCase(emptyUserCart.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.isSuccess = false;
+        state.message = action.error;
       })
   },
 });

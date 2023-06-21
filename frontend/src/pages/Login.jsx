@@ -7,6 +7,7 @@ import * as yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
 import { loginUser } from "../features/user/userSlice";
 import { toast } from "react-hot-toast";
+import { useEffect } from "react";
 
 const logInSchema = yup.object({
   email: yup
@@ -22,40 +23,38 @@ const Login = () => {
   const dispatch = useDispatch();
 
   const authState = useSelector((state) => state?.auth);
-  
+
   const formik = useFormik({
     initialValues: {
       email: "",
       password: "",
     },
     validationSchema: logInSchema,
-    onSubmit: async (values) => {
-      try {
-        await dispatch(loginUser(values));
-        setTimeout(() => {
-          navigate("/");
-        }, 300);
-      } catch (error) {
-        if (error.response && error.response.status === 401) {
-          formik.setFieldError("password", error.response.data.message);
-        } else {
-          console.error("An error occurred:", error);
-        }
-      }
+    onSubmit: (values) => {
+      dispatch(loginUser(values));
     },
   });
+
+  useEffect(() => {
+    if (authState.user !== null && authState.isError === false) {
+      navigate("/");
+    }
+  }, [authState]);
 
   return (
     <>
       <Meta title={"Login"} />
       <BreadCrumb title="Login" />
-
       <div className="login-wrapper py-5 home-wrapper-2">
         <div className="row">
           <div className="col-12">
             <div className="auth-card">
               <h3 className="text-center mb-3">Login</h3>
-              <form action="" onSubmit={formik.handleSubmit} className="d-flex flex-column gap-15">
+              <form
+                action=""
+                onSubmit={formik.handleSubmit}
+                className="d-flex flex-column gap-15"
+              >
                 <CustomInput
                   type="email"
                   name="email"
@@ -65,7 +64,9 @@ const Login = () => {
                   onBlur={formik.handleBlur("email")}
                 />
                 <div className="error">
-                  {formik.touched.email && formik.errors.email}
+                  {formik.touched.email && formik.errors.email
+                    ? formik.errors.email
+                    : null}
                 </div>
                 <CustomInput
                   type="password"
@@ -76,11 +77,12 @@ const Login = () => {
                   onBlur={formik.handleBlur("password")}
                 />
                 <div className="error">
-                  {formik.touched.password && formik.errors.password}
+                  {formik.touched.password && formik.errors.password ? (
+                    formik.errors.password
+                  ) : null}
                 </div>
                 <div>
                   <Link to="/forgot-password">Forgot Password?</Link>
-
                   <div className="mt-3 d-flex justify-content-center gap-15 align-items-center">
                     <button className="button border-0" type="submit">
                       Login

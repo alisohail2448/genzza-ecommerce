@@ -4,7 +4,7 @@ import { BiArrowBack } from "react-icons/bi";
 import watch from "../images/watch.jpg";
 import logo from "../images/logot3.png";
 import { useDispatch, useSelector } from "react-redux";
-import { createUserOrder, getUserCart } from "../features/user/userSlice";
+import { createUserOrder, emptyUserCart, getUserCart } from "../features/user/userSlice";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import { ChevronDoubleRightIcon } from "@heroicons/react/24/outline";
@@ -175,6 +175,8 @@ const Checkout = () => {
     );
 
     if (result) {
+      await dispatch(emptyUserCart());
+      await dispatch(getUserCart());
       navigate("/my-orders");
     }
   };

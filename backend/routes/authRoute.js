@@ -1,5 +1,5 @@
 const express = require('express');
-const { createUser, loginUser, getAllUsers, getUser, deleteUser, updateUser, blockUser, unBlockUser, handleRefreshToken, handleLogout, updatePassword, forgotPasswordToken, resetPassword, loginAdmin, getWishlist, saveUserAddress, userCart, getUserCart, removeProductFromCart, updateProductQuantityFromCart, createOrder, getMyOrders, getMonthWiseOrderIncome, getYearlyTotalOrders, getAllOrders, getSingleOrder, updateOrder, getComparePageProducts, addToComparePage, removeProductFromCompare } = require('../controller/userCtrl');
+const { createUser, loginUser, getAllUsers, getUser, deleteUser, updateUser, blockUser, unBlockUser, handleRefreshToken, handleLogout, updatePassword, forgotPasswordToken, resetPassword, loginAdmin, getWishlist, saveUserAddress, userCart, getUserCart, removeProductFromCart, updateProductQuantityFromCart, createOrder, getMyOrders, getMonthWiseOrderIncome, getYearlyTotalOrders, getAllOrders, getSingleOrder, updateOrder, getComparePageProducts, addToComparePage, removeProductFromCompare, emptyCart } = require('../controller/userCtrl');
 const { authMiddleware, isAdmin } = require('../middlewares/authMiddleware');
 const { checkout, paymentVerification } = require('../controller/paymentCtrl');
 const router = express.Router();
@@ -36,7 +36,7 @@ router.get('/get-month-wise-order-income', authMiddleware, getMonthWiseOrderInco
 router.get('/get-year-wise-order-income', authMiddleware, getYearlyTotalOrders);
 
 router.get('/:id', authMiddleware, isAdmin, getUser);
-// router.delete('/empty-cart', authMiddleware, emptyCart);
+router.delete('/empty-cart', authMiddleware, emptyCart);
 router.delete('/delete-product-cart/:cartItemId', authMiddleware, removeProductFromCart);
 router.delete('/delete-product-cart/:cartItemId/:newQuantity', authMiddleware, updateProductQuantityFromCart);
 router.delete('/compare', authMiddleware, removeProductFromCompare);

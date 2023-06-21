@@ -93,6 +93,11 @@ const removeCompareProduct = async (productId) => {
   if (response.data) return response.data;
 };
 
+const emptyCart = async () => {
+  const response = await axios.delete(`${base_url}user/empty-cart`, config);
+  if (response.data) return response.data;
+};
+
 
 
 export const authService = {
@@ -112,4 +117,5 @@ export const authService = {
   addCompareProduct,
   getCompareProduct,
   removeCompareProduct,
+  emptyCart,
 };

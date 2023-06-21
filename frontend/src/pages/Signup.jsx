@@ -5,9 +5,10 @@ import { Link } from "react-router-dom";
 import CustomInput from "../components/CustomInput";
 import { useFormik } from "formik";
 import * as yup from "yup";
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { registerUser } from "../features/user/userSlice";
 import { useNavigate } from 'react-router-dom';
+import { useEffect } from "react";
 
 
 
@@ -23,6 +24,8 @@ const Signup = () => {
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  
+  const authState = useSelector((state) => state?.auth);
 
   const formik = useFormik({
     initialValues: {
@@ -35,9 +38,14 @@ const Signup = () => {
     validationSchema: signUpSchema,
     onSubmit: (values) => {
       dispatch(registerUser(values))
-      navigate("/login");
     },
   });
+
+  useEffect(() => {
+    if (authState.createdUser !== null && authState.isError === false) {
+      navigate("/login");
+    }
+  }, [authState]);
 
   return (
     <>
